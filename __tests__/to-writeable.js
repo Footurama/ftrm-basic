@@ -68,6 +68,17 @@ describe('factory', () => {
 		expect(stream._write.mock.calls[0][0].toString()).toEqual(`${new Date(TS).toISOString()}\t${VALUE}\n`);
 	});
 
+	test('expose event to formater', () => {
+		const input = new EventEmitter();
+		const stream = new Writable();
+		stream._write = (chunk, encoding, cb) => cb();
+		const format = jest.fn(() => '');
+		STREAM.factory({stream, format}, [input], []);
+		const THIS = {};
+		input.emit('update', 'test', 1234567890, THIS);
+		expect(format.mock.calls[0][2]).toBe(THIS);
+	});
+
 	test('end stream on destroy', async () => {
 		const input = new EventEmitter();
 		const stream = new Writable();

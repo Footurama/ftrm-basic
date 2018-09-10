@@ -6,8 +6,8 @@ function check (opts) {
 }
 
 function factory (opts, input, output) {
-	input[0].on('update', (value, timestamp) => {
-		const line = opts.format(value, timestamp);
+	input[0].on('update', (value, timestamp, event) => {
+		const line = opts.format(value, timestamp, event);
 		opts.stream.write(line);
 	});
 
