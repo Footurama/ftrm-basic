@@ -11,7 +11,11 @@ function factory (opts, input, output) {
 		opts.stream.write(line);
 	});
 
-	return () => new Promise((resolve) => opts.stream.end(resolve));
+	if (!opts.dontCloseStream) {
+		return () => new Promise((resolve) => opts.stream.end(resolve));
+	} else {
+		return () => Promise.resolve();
+	}
 }
 
 module.exports = { check, factory };

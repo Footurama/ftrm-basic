@@ -54,6 +54,7 @@ Configuration:
  * ```input```: **1**. Values to be written to the stream.
  * ```output```: **0**.
  * ```stream```: Instance of ```stream.Writable```.
+ * ```dontCloseStream```: Don't close the stream on exit. *This is required when writing to process.stdout. This stream cannot be closed.*
  * ```format```: Function to format incoming values to chunks for the stream: ```(value, timestamp, src) => chunk```. ```timestamp``` is the time when value was created. ```src``` is the *tubemail* event locally raised when the value has been received. ```srv.event``` contains the actual event. Useful when working with wild characters in the input pipe.
 
 Example:
@@ -63,6 +64,7 @@ Example:
 module.exports = [require('ftrm-basic/to-writable'), {
 	input: '#', // Wild character for all pipes
 	stream: process.stdout,
+	dontCloseStream: true,
 	format: (value, ts, src) => `${new Date(ts)}\t${src.event}\t${value.toString()}\n`
 }];
 ```
