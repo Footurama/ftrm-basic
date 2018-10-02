@@ -67,6 +67,34 @@ module.exports = [require('ftrm-basic/to-writable'), {
 }];
 ```
 
+### ftrm-basic/from-event
+
+Grab values from arbitrary event busses and output them into pipes.
+
+Configuration:
+
+ * ```input```: **0**.
+ * ```output```: **1..n**. Outputs to write values to. The output's name will be used to select the event accordingly.
+ * ```bus```: Instance of ```EventEmitter```.
+
+Example:
+
+```js
+// Eventbus emitting 'random' and 'time' event
+const EventEmitter = require('events');
+const myEventBus = new EventEmitter();
+setInterval(() => myEventBus.emit('time', new Date()), 1000);
+setInterval(() => myEventBus.emit('random', Math.random()), 3000);
+
+module.exports = [require('ftrm-basic/from-event'), {
+	output: {
+		'time': 'some-pipe-for-time',
+		'random': 'some-pipe-for-random-numbers'
+	},
+	bus: myEventBus
+}];
+```
+
 ### ftrm-basic/select
 
 Select one input pipe out of many to forward it to the output pipe.
