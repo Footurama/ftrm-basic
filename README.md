@@ -24,6 +24,33 @@ module.exports = [require('ftrm-basic/inject'), {
 }];
 ```
 
+### ftrm-basic/inject
+
+Inject values from object into the realm.
+
+Configuration:
+
+ * ```input```: **0**.
+ * ```output```: **1..n**. Target pipes for values. Every pipe must have a name.
+ * ```inject```: Function generating an object containing values: ```() => values```. Every key corresponds to output pipe name. Can be deferred using Promises.
+ * ```interval```: Interval between two injections in milliseconds.
+
+Example:
+
+```js
+// Inject random numbers every second
+module.exports = [require('ftrm-basic/inject'), {
+	output: {
+		'rss': 'memused-rss',
+		'heapTotal': 'memused-heapTotal',
+		'heapUsed': 'memused-heapUsed',
+		'external': 'memused-external'
+	},
+	inject: () => process.memoryUsage(),
+	interval: 1000
+}];
+```
+
 ### ftrm-basic/map
 
 Map values from one pipe to another.
