@@ -157,3 +157,29 @@ module.exports = [require('ftrm-basic/select'), {
 	weight: 'prio'
 }];
 ```
+
+### ftrm-basic/sliding-window
+
+Collects input values and combines them according to given configuration.
+
+Configuration:
+
+ * ```input```: **1**. Pipe to read from.
+ * ```output```: **1**. Results.
+ * ```includeValue```: Function to decide whether to include a certain value in the window or net: ```(age, index) => keep```. ```age``` is the value's age in milliseconds. ```index``` is the position of the value inside the window. The latest value has index ```0```. If ```keep``` is not truthy, the value in question will be removed from the window.
+ * ```calcOutput```: A function that calculates the output value: ```(window) => value```. ```window``` is an array of the ```value``` inside the sliding window.
+
+Example:
+```js
+// Select 'setpoint' from several inputs
+module.exports = [require('ftrm-basic/sliding-window'), {
+	input: 'raw-data-pipe',
+	output: 'averaged-data-pipe',
+	includeValue: (age, index) => age < 3600000 // Keep all values of one hour
+	calcOutput: (window) => window.reduce((avg, value) => {
+		// Will be called for every value inside the window
+		avg += value / window.length;
+		return avg;
+	}, 0)
+}];
+```
