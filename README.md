@@ -168,6 +168,7 @@ Configuration:
  * ```output```: **1**. Results.
  * ```includeValue```: Function to decide whether to include a certain value in the window or net: ```(age, index) => keep```. ```age``` is the value's age in milliseconds. ```index``` is the position of the value inside the window. The latest value has index ```0```. If ```keep``` is not truthy, the value in question will be removed from the window.
  * ```calcOutput```: A function that calculates the output value: ```(window) => value```. ```window``` is an array of the ```value``` inside the sliding window.
+ * ```window```: An array to keep all values. This can be used to preload or store the current window. Defaults to an empty array.
 
 Example:
 ```js

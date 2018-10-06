@@ -60,6 +60,17 @@ describe('check', () => {
 			expect(e.message).toEqual('calcOutput function must be specified');
 		}
 	});
+
+	test('default window to an empty array', () => {
+		const opts = {
+			input: [ {} ],
+			output: [ {} ],
+			includeValue: () => {},
+			calcOutput: () => {}
+		};
+		SLIDINGWINDOW.check(opts);
+		expect(opts.window).toBeInstanceOf(Array);
+	});
 });
 
 describe('factory', () => {
@@ -69,7 +80,7 @@ describe('factory', () => {
 		const now = 4;
 		const includeValue = jest.fn((age, index) => age >= now - timestamps[0]);
 		const input = new EventEmitter();
-		SLIDINGWINDOW.factory({includeValue, calcOutput: () => {}}, [input], [{}]);
+		SLIDINGWINDOW.factory({window: [], includeValue, calcOutput: () => {}}, [input], [{}]);
 		Date.now = jest.fn(() => now);
 
 		input.emit('update', values[0], timestamps[0]);
@@ -97,7 +108,7 @@ describe('factory', () => {
 		const calcOutput = jest.fn(() => outputValue);
 		const input = new EventEmitter();
 		const output = {};
-		SLIDINGWINDOW.factory({includeValue, calcOutput}, [input], [output]);
+		SLIDINGWINDOW.factory({window: [], includeValue, calcOutput}, [input], [output]);
 		input.emit('update', values[0], timestamps[0]);
 		expect(calcOutput.mock.calls[0][0].length).toBe(1);
 		expect(calcOutput.mock.calls[0][0][0]).toBe(values[0]);
@@ -113,7 +124,7 @@ describe('factory', () => {
 		const calcOutput = jest.fn(() => { throw new Error(); });
 		const input = new EventEmitter();
 		const output = {};
-		SLIDINGWINDOW.factory({includeValue: () => true, calcOutput}, [input], [output]);
+		SLIDINGWINDOW.factory({window: [], includeValue: () => true, calcOutput}, [input], [output]);
 		input.emit('update', 1, 2);
 		expect(calcOutput.mock.calls.length).toBe(1);
 		expect(output.value).toBeUndefined();
