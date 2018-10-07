@@ -184,3 +184,26 @@ module.exports = [require('ftrm-basic/sliding-window'), {
 	}, 0)
 }];
 ```
+
+### ftrm-basic/combine
+
+Combine input values to one output value.
+
+Configuration:
+
+ * ```input```: **1..n**. Pipe to read from.
+ * ```output```: **1**. Results.
+ * ```combine```: A function that is called every time an input has received a new value and all input values are valid (i.e. not expired and known): ```(input0, input1, ...) => output```.
+
+Example:
+```js
+// Calculate an error
+module.exports = [require('ftrm-basic/combine'), {
+	input: [
+		'desired-value-pipe',
+		'actual-value-pipe'
+	],
+	output: 'error-pipe',
+	combine: (desired, actual) => actual - desired
+}];
+```
