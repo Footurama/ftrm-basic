@@ -207,3 +207,37 @@ module.exports = [require('ftrm-basic/combine'), {
 	combine: (desired, actual) => actual - desired
 }];
 ```
+
+
+### ftrm-basic/scheduler
+
+Helper fur running schedules based on current time and input values.
+
+Configuration:
+
+ * ```input```: **0..n**. Pipes to read from.
+ * ```output```: **1**. Schedule's result.
+ * ```interval```: Interval in milliseconds for running the scheduler. Default: 60000ms.
+ * ```schedule```: A function that is called every time an input has received or the specified interval: ```(date, input0, input1, ...) => output```. ```date``` is an object representing current local time:
+   * ```s```: Seconds.
+   * ```m```: Minutes.
+   * ```h```: Hours.
+   * ```dayofweek```: Week day. Monday is ```1```; Sunday is ```7```.
+   * ```dayofmonth```: Day.
+   * ```month```: Month.
+   * ```year```: Year.
+   * ```date```: The corresponding ```Date``` object.
+
+Example:
+```js
+// Calculate an error
+module.exports = [require('ftrm-basic/scheduler'), {
+	input: ['user.present'],
+	output: 'desiredTemperature',
+	schedule: (now, present) => {
+		const weekend = now.dayofweek >= 6;
+		if (weekend && present) return 19;
+		else return 17;
+	}
+}];
+```
