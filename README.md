@@ -241,3 +241,34 @@ module.exports = [require('ftrm-basic/scheduler'), {
 	}
 }];
 ```
+
+### ftrm-basic/generic
+
+Generic building block to implement special components.
+
+Configuration:
+
+ * ```input```: **0..n**. Pipes to read from.
+ * ```output```: **0..n**. Pipes to write to.
+ * ```factory```: Factory function will be called on start: ```(inputs, outputs) => {...}```.
+
+Example:
+
+```js
+module.exports = [require('ftrm-basic/generic'), {
+	input: {
+		inpipe1: 'pipe1',
+		inpipe2: 'pipe2'
+	},
+	output : {
+		outpipe: 'pipe3'
+	},
+	factory: (i, o) => {
+		i.inpipe1.on('update', calc);
+		i.inpipe2.on('update', calc);
+		function calc () {
+			o.outpipe.value = i.inpipe1.value + i.inpipe2.value;
+		}
+	}
+}];
+```
