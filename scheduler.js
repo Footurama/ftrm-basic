@@ -1,5 +1,4 @@
 function check (opts) {
-	if (opts.input.length === 0) throw new Error('At least one input must be specified');
 	if (opts.output.length !== 1) throw new Error('One output must be specified');
 	if (typeof opts.schedule !== 'function') throw new Error('schedule must be a function');
 	if (opts.interval === undefined) opts.interval = 60000;

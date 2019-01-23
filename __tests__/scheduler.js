@@ -4,23 +4,10 @@ const SCHEDULER = require('../scheduler.js');
 jest.useFakeTimers();
 
 describe('check', () => {
-	test('expect at least one input', () => {
-		try {
-			SCHEDULER.check({
-				input: [],
-				output: [ {} ],
-				schedule: () => {}
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('At least one input must be specified');
-		}
-	});
 	test('expect one output', () => {
 		try {
 			SCHEDULER.check({
-				input: [ {} ],
+				input: [],
 				output: [],
 				schedule: () => {}
 			});
