@@ -9,10 +9,12 @@ function factory (opts, input, output) {
 	input = input.entries();
 
 	function evaluate () {
-		// Make sure no inputs are expired and have received values
-		// i.expired is set to undefined if value has not been set, yet.
-		const expired = input.reduce((abort, i) => abort || i.expired || i.expired === undefined, false);
-		if (expired) return;
+		if (!opts.combineExpiredInputs) {
+			// Make sure no inputs are expired and have received values
+			// i.expired is set to undefined if value has not been set, yet.
+			const expired = input.reduce((abort, i) => abort || i.expired || i.expired === undefined, false);
+			if (expired) return;
+		}
 		try {
 			output[0].value = opts.combine.apply(null, input.map((i) => i.value));
 		} catch (e) {}

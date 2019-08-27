@@ -83,6 +83,20 @@ describe('factroy', () => {
 		expect(combine.mock.calls.length).toBe(0);
 	});
 
+	test('combine inputs with expired values if forced', () => {
+		const combine = jest.fn();
+		const i0 = new EventEmitter();
+		i0.value = 0;
+		i0.expired = true;
+		const i1 = new EventEmitter();
+		i1.value = 1;
+		const input = [i0, i1];
+		input.entries = () => input;
+		COMBINE.factory({combine, combineExpiredInputs: true}, input, [{}]);
+		i1.emit('update');
+		expect(combine.mock.calls.length).toBe(1);
+	});
+
 	test('don\'t combine inputs if not all inputs have recieved values', () => {
 		const combine = jest.fn();
 		const i0 = new EventEmitter();
