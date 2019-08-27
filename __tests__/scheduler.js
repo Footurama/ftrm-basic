@@ -45,8 +45,9 @@ describe('factroy', () => {
 		// Mock time
 		// Unix time is UTC. But we want to mock local time!
 		// Thus we modify the timestamp according to the local time offset.
-		const offsetToUTC = new Date().getTimezoneOffset() * 60 * 1000;
-		Date.now = () => 1234567890000 + offsetToUTC;
+		const unixtime = 1234567890000;
+		const offsetToUTC = new Date(unixtime).getTimezoneOffset() * 60 * 1000;
+		Date.now = () => unixtime + offsetToUTC;
 		// Mock schedule
 		const oValue = 12;
 		const schedule = jest.fn(() => oValue);
