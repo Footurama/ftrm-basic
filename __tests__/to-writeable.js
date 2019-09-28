@@ -56,6 +56,12 @@ describe('check', () => {
 });
 
 describe('factory', () => {
+	test('remove stream from opts', () => {
+		const opts = {stream: {}};
+		STREAM.factory(opts, [{on: () => {}}], []);
+		expect(opts.stream).toBeUndefined();
+	});
+
 	test('write to stream', () => {
 		const input = new EventEmitter();
 		const stream = new Writable();

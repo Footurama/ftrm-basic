@@ -60,6 +60,12 @@ describe('check', () => {
 });
 
 describe('factory', () => {
+	test('remove bus from opts', () => {
+		const opts = {bus: {}};
+		FROMEVENT.factory(opts, [], []);
+		expect(opts.bus).toBeUndefined();
+	});
+
 	test('listen to events and publish event\'s data', () => {
 		const bus = {on: jest.fn()};
 		const e1 = {name: 'e1'};

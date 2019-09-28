@@ -74,6 +74,12 @@ describe('check', () => {
 });
 
 describe('factory', () => {
+	test('remove window from opts', () => {
+		const opts = {window: []};
+		SLIDINGWINDOW.factory(opts, [{on: () => {}}], []);
+		expect(opts.window).toBeUndefined();
+	});
+
 	test('pass values to includeValue function', () => {
 		const values = [0, 1, 2];
 		const timestamps = [0, 1, 2];

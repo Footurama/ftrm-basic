@@ -1,3 +1,8 @@
+const pkgInfo = require('./package.json');
+const fileName = __filename.slice(__dirname.length + 1, -3);
+const name = `${pkgInfo.name}/${fileName}`;
+const url = pkgInfo.homepage;
+
 function check (opts) {
 	if (opts.input.length !== 0) throw new Error('No inputs can be specified');
 	if (opts.output.length < 1) throw new Error('At least one output must be specified');
@@ -10,6 +15,12 @@ function check (opts) {
 }
 
 function factory (opts, input, output) {
+	// Remove bus object from opts object. Otherwise it will be
+	// transmitted to every inspector node. And we don't know
+	// whats inside the bus ...
+	const bus = opts.bus;
+	delete opts.bus;
+
 	// Make sure output is iterable
 	output = output.entries();
 
@@ -17,15 +28,15 @@ function factory (opts, input, output) {
 	// The output's name is used as event name
 	for (let o of output) {
 		o.onEvent = (value) => { o.value = value; };
-		opts.bus.on(o.name, o.onEvent);
+		bus.on(o.name, o.onEvent);
 	}
 
 	return () => {
 		// Remove listener
 		for (let o of output) {
-			opts.bus.removeListener(o.name, o.onEvent);
+			bus.removeListener(o.name, o.onEvent);
 		}
 	};
 }
 
-module.exports = { check, factory };
+module.exports = { name, url, check, factory };
