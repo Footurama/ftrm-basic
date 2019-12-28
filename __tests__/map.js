@@ -5,44 +5,26 @@ const nextLoop = () => new Promise((resolve) => setImmediate(resolve));
 
 describe('check', () => {
 	test('expect one input', () => {
-		try {
-			MAP.check({
-				input: [],
-				output: [ {} ],
-				map: () => {}
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('One input must be specified');
-		}
+		expect(() => MAP.check({
+			input: [],
+			output: [ {} ],
+			map: () => {}
+		})).toThrow('One input must be specified');
 	});
 
 	test('expect one output', () => {
-		try {
-			MAP.check({
-				input: [ {} ],
-				output: [],
-				map: () => {}
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('One output must be specified');
-		}
+		expect(() => MAP.check({
+			input: [ {} ],
+			output: [],
+			map: () => {}
+		})).toThrow('One output must be specified');
 	});
 
 	test('expect map function', () => {
-		try {
-			MAP.check({
-				input: [ {} ],
-				output: [ {} ]
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('Map function must be specified');
-		}
+		expect(() => MAP.check({
+			input: [ {} ],
+			output: [ {} ]
+		})).toThrow('Map function must be specified');
 	});
 });
 
