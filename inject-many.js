@@ -11,14 +11,21 @@ function check (opts) {
 	}
 	if (typeof opts.inject !== 'function') throw new Error('Inject function must be specified');
 	if (typeof opts.interval !== 'number') throw new Error('Interval must be specified');
+	if (opts.logLevelInject === undefined) opts.logLevelInject = 'warn';
 }
 
-function factory (opts, input, output) {
+function factory (opts, input, output, log) {
 	const handle = setInterval(async () => {
-		const values = await opts.inject();
-		Object.keys(values).forEach((key) => {
-			if (output[key]) output[key].value = values[key];
-		});
+		try {
+			const values = await opts.inject();
+			Object.keys(values).forEach((key) => {
+				if (output[key]) output[key].value = values[key];
+			});
+		} catch (err) {
+			if (log[opts.logLevelInject]) {
+				log[opts.logLevelInject](err, 'ab9f3a0a26807d67d0bb2abd987fd378');
+			}
+		}
 	}, opts.interval);
 
 	return () => clearInterval(handle);

@@ -47,6 +47,17 @@ describe('check', () => {
 			inject: () => {}
 		})).toThrow('Interval must be specified');
 	});
+
+	test('defaults', () => {
+		const opts = {
+			input: [],
+			output: [ {name: 'test'} ],
+			inject: () => {},
+			interval: 123
+		};
+		INJECTMANY.check(opts);
+		expect(opts.logLevelInject).toEqual('warn');
+	});
 });
 
 describe('factory', () => {
@@ -98,7 +109,7 @@ describe('factory', () => {
 	});
 
 	test('stop interval after calling destroy', () => {
-		const inject = jest.fn();
+		const inject = jest.fn(() => ({}));
 		const interval = 1000;
 		const destroy = INJECTMANY.factory({inject, interval}, [], [{}]);
 		jest.advanceTimersByTime(interval);
@@ -106,5 +117,23 @@ describe('factory', () => {
 		destroy();
 		jest.advanceTimersByTime(interval);
 		expect(inject.mock.calls.length).toBe(1);
+	});
+
+	test('ignore thrown errors', () => {
+		const inject = jest.fn(() => { throw new Error(); });
+		const interval = 1000;
+		INJECTMANY.factory({inject, interval, logLevelInject: null}, [], {}, {});
+		jest.advanceTimersByTime(interval);
+	});
+
+	test('report thrown errors', () => {
+		const err = new Error();
+		const inject = jest.fn(() => { throw err; });
+		const interval = 1000;
+		const error = jest.fn();
+		INJECTMANY.factory({inject, interval, logLevelInject: 'error'}, [], {}, {error});
+		jest.advanceTimersByTime(interval);
+		expect(error.mock.calls[0][0]).toBe(err);
+		expect(error.mock.calls[0][1]).toEqual('ab9f3a0a26807d67d0bb2abd987fd378');
 	});
 });
