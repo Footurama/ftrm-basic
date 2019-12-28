@@ -9,8 +9,8 @@ function check (opts) {
 	}
 }
 
-function factory (opts, input, output) {
-	return opts.factory(input, output);
+function factory (opts, input, output, log) {
+	return opts.factory(input, output, log);
 }
 
 module.exports = { name, url, check, factory };
