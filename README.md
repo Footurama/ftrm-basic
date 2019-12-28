@@ -8,10 +8,10 @@ Inject values into the realm.
 
 Configuration:
 
- * ```input```: **0**.
- * ```output```: **1**. Target pipe for injected values.
- * ```inject```: Function generating values: ```() => value```. Can be deferred using Promises.
- * ```interval```: Interval between two injections in milliseconds.
+ * `input`: **0**.
+ * `output`: **1**. Target pipe for injected values.
+ * `inject`: Function generating values: `() => value`. Can be deferred using Promises.
+ * `interval`: Interval between two injections in milliseconds.
 
 Example:
 
@@ -24,22 +24,22 @@ module.exports = [require('ftrm-basic/inject'), {
 }];
 ```
 
-### ftrm-basic/inject
+### ftrm-basic/inject-many
 
 Inject values from object into the realm.
 
 Configuration:
 
- * ```input```: **0**.
- * ```output```: **1..n**. Target pipes for values. Every pipe must have a name.
- * ```inject```: Function generating an object containing values: ```() => values```. Every key corresponds to output pipe name. Can be deferred using Promises.
- * ```interval```: Interval between two injections in milliseconds.
+ * `input`: **0**.
+ * `output`: **1..n**. Target pipes for values. Every pipe must have a name.
+ * `inject`: Function generating an object containing values: `() => values`. Every key corresponds to output pipe name. Can be deferred using Promises.
+ * `interval`: Interval between two injections in milliseconds.
 
 Example:
 
 ```js
 // Inject random numbers every second
-module.exports = [require('ftrm-basic/inject'), {
+module.exports = [require('ftrm-basic/inject-many'), {
 	output: {
 		'rss': 'memused-rss',
 		'heapTotal': 'memused-heapTotal',
@@ -57,9 +57,9 @@ Map values from one pipe to another.
 
 Configuration:
 
- * ```input```: **1**. Values to be mapped
- * ```output```: **1**. Mapped values
- * ```map```: Function to map the input to the output: ```(input) => output```. Can be deferred using Promises.
+ * `input`: **1**. Values to be mapped
+ * `output`: **1**. Mapped values
+ * `map`: Function to map the input to the output: `(input) => output`. Can be deferred using Promises.
 
 Example:
 
@@ -78,11 +78,11 @@ Write values from a pipe into a writable stream. *Useful for debug logging to st
 
 Configuration:
 
- * ```input```: **1**. Values to be written to the stream.
- * ```output```: **0**.
- * ```stream```: Instance of ```stream.Writable```.
- * ```dontCloseStream```: Don't close the stream on exit. *This is required when writing to process.stdout. This stream cannot be closed.*
- * ```format```: Function to format incoming values to chunks for the stream: ```(value, timestamp, src) => chunk```. ```timestamp``` is the time when value was created. ```src``` is the *tubemail* event locally raised when the value has been received. ```srv.event``` contains the actual event. Useful when working with wild characters in the input pipe.
+ * `input`: **1**. Values to be written to the stream.
+ * `output`: **0**.
+ * `stream`: Instance of `stream.Writable`.
+ * `dontCloseStream`: Don't close the stream on exit. *This is required when writing to process.stdout. This stream cannot be closed.*
+ * `format`: Function to format incoming values to chunks for the stream: `(value, timestamp, src) => chunk`. `timestamp` is the time when value was created. `src` is the *tubemail* event locally raised when the value has been received. `srv.event` contains the actual event. Useful when working with wild characters in the input pipe.
 
 Example:
 
@@ -102,9 +102,9 @@ Grab values from arbitrary event busses and output them into pipes.
 
 Configuration:
 
- * ```input```: **0**.
- * ```output```: **1..n**. Outputs to write values to. The output's name will be used to select the event accordingly.
- * ```bus```: Instance of ```EventEmitter```.
+ * `input`: **0**.
+ * `output`: **1..n**. Outputs to write values to. The output's name will be used to select the event accordingly.
+ * `bus`: Instance of `EventEmitter`.
 
 Example:
 
@@ -130,14 +130,14 @@ Select one input pipe out of many to forward it to the output pipe.
 
 Configuration:
 
- * ```input```: **1..n**. Input pipes to select from.
- * ```output```: **1**.
- * ```weight```: Can be either a string or a function.
-   * Function: ```(input, index) => score```. Is called for every input. ```input``` holds the input's instance and has the properties ```input.value```, ```input.timestamp``` and ```input.expired```. ```index``` is the respective index in the input array. The input that returned the highest score will be picked for the output. If the function returns ```undefined``` it won't be taken into account.
+ * `input`: **1..n**. Input pipes to select from.
+ * `output`: **1**.
+ * `weight`: Can be either a string or a function.
+   * Function: `(input, index) => score`. Is called for every input. `input` holds the input's instance and has the properties `input.value`, `input.timestamp` and `input.expired`. `index` is the respective index in the input array. The input that returned the highest score will be picked for the output. If the function returns `undefined` it won't be taken into account.
    * String:
-     * ```'prio'```: Takes the first input that has a value that is not ```undefined``` and is not expired.
-     * ```'max'```: Takes the input with the highest value that is not expired.
-     * ```'min'```: Takes the input with the lowest value that is not expired.
+     * `'prio'`: Takes the first input that has a value that is not `undefined` and is not expired.
+     * `'max'`: Takes the input with the highest value that is not expired.
+     * `'min'`: Takes the input with the lowest value that is not expired.
 
 Example:
 
@@ -164,11 +164,11 @@ Collects input values and combines them according to given configuration.
 
 Configuration:
 
- * ```input```: **1**. Pipe to read from.
- * ```output```: **1**. Results.
- * ```includeValue```: Function to decide whether to include a certain value in the window or net: ```(age, index) => keep```. ```age``` is the value's age in milliseconds. ```index``` is the position of the value inside the window. The latest value has index ```0```. If ```keep``` is not truthy, the value in question will be removed from the window.
- * ```calcOutput```: A function that calculates the output value: ```(window) => value```. ```window``` is an array of the ```value``` inside the sliding window.
- * ```window```: An array to keep all values. This can be used to preload or store the current window. Defaults to an empty array.
+ * `input`: **1**. Pipe to read from.
+ * `output`: **1**. Results.
+ * `includeValue`: Function to decide whether to include a certain value in the window or net: `(age, index) => keep`. `age` is the value's age in milliseconds. `index` is the position of the value inside the window. The latest value has index `0`. If `keep` is not truthy, the value in question will be removed from the window.
+ * `calcOutput`: A function that calculates the output value: `(window) => value`. `window` is an array of the `value` inside the sliding window.
+ * `window`: An array to keep all values. This can be used to preload or store the current window. Defaults to an empty array.
 
 Example:
 ```js
@@ -191,9 +191,9 @@ Combine input values to one output value.
 
 Configuration:
 
- * ```input```: **1..n**. Pipe to read from.
- * ```output```: **1**. Results.
- * ```combine```: A function that is called every time an input has received a new value and all input values are valid (i.e. not expired and known): ```(input0, input1, ...) => output```.
+ * `input`: **1..n**. Pipe to read from.
+ * `output`: **1**. Results.
+ * `combine`: A function that is called every time an input has received a new value and all input values are valid (i.e. not expired and known): `(input0, input1, ...) => output`.
 
 Example:
 ```js
@@ -215,18 +215,18 @@ Helper fur running schedules based on current time and input values.
 
 Configuration:
 
- * ```input```: **0..n**. Pipes to read from.
- * ```output```: **1**. Schedule's result.
- * ```interval```: Interval in milliseconds for running the scheduler. Default: 60000ms.
- * ```schedule```: A function that is called every time an input has received or the specified interval: ```(date, input0, input1, ...) => output```. ```date``` is an object representing current local time:
-   * ```s```: Seconds.
-   * ```m```: Minutes.
-   * ```h```: Hours.
-   * ```dayofweek```: Week day. Monday is ```1```; Sunday is ```7```.
-   * ```dayofmonth```: Day.
-   * ```month```: Month.
-   * ```year```: Year.
-   * ```date```: The corresponding ```Date``` object.
+ * `input`: **0..n**. Pipes to read from.
+ * `output`: **1**. Schedule's result.
+ * `interval`: Interval in milliseconds for running the scheduler. Default: 60000ms.
+ * `schedule`: A function that is called every time an input has received or the specified interval: `(date, input0, input1, ...) => output`. `date` is an object representing current local time:
+   * `s`: Seconds.
+   * `m`: Minutes.
+   * `h`: Hours.
+   * `dayofweek`: Week day. Monday is `1`; Sunday is `7`.
+   * `dayofmonth`: Day.
+   * `month`: Month.
+   * `year`: Year.
+   * `date`: The corresponding `Date` object.
 
 Example:
 ```js
@@ -248,9 +248,9 @@ Generic building block to implement special components.
 
 Configuration:
 
- * ```input```: **0..n**. Pipes to read from.
- * ```output```: **0..n**. Pipes to write to.
- * ```factory```: Factory function will be called on start: ```(inputs, outputs) => {...}```.
+ * `input`: **0..n**. Pipes to read from.
+ * `output`: **0..n**. Pipes to write to.
+ * `factory`: Factory function will be called on start: `(inputs, outputs) => {...}`.
 
 Example:
 
