@@ -6,61 +6,37 @@ const nextLoop = () => new Promise((resolve) => setImmediate(resolve));
 
 describe('check', () => {
 	test('expect zero inputs', () => {
-		try {
-			INJECT.check({
-				input: [ {} ],
-				output: [ {} ],
-				inject: () => {},
-				interval: 42
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('No inputs can be specified');
-		}
+		expect(() => INJECT.check({
+			input: [ {} ],
+			output: [ {} ],
+			inject: () => {},
+			interval: 42
+		})).toThrow('No inputs can be specified');
 	});
 
 	test('expect one output', () => {
-		try {
-			INJECT.check({
-				input: [],
-				output: [],
-				inject: () => {},
-				interval: 42
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('One output must be specified');
-		}
+		expect(() => INJECT.check({
+			input: [],
+			output: [],
+			inject: () => {},
+			interval: 42
+		})).toThrow('One output must be specified');
 	});
 
 	test('expect inject function', () => {
-		try {
-			INJECT.check({
-				input: [],
-				output: [ {} ],
-				interval: 42
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('Inject function must be specified');
-		}
+		expect(() => INJECT.check({
+			input: [],
+			output: [ {} ],
+			interval: 42
+		})).toThrow('Inject function must be specified');
 	});
 
 	test('expect interval', () => {
-		try {
-			INJECT.check({
-				input: [],
-				output: [ {} ],
-				inject: () => {}
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('Interval must be specified');
-		}
+		expect(() => INJECT.check({
+			input: [],
+			output: [ {} ],
+			inject: () => {}
+		})).toThrow('Interval must be specified');
 	});
 });
 
