@@ -26,6 +26,16 @@ describe('check', () => {
 			output: [ {} ]
 		})).toThrow('Map function must be specified');
 	});
+
+	test('defaults', () => {
+		const opts = {
+			input: [ {} ],
+			output: [ {} ],
+			map: () => {}
+		};
+		MAP.check(opts);
+		expect(opts.logLevelMap).toEqual('warn');
+	});
 });
 
 describe('factory', () => {
@@ -48,5 +58,26 @@ describe('factory', () => {
 		input.emit('update', VALUE);
 		await nextLoop();
 		expect(output.value).toBe(VALUE);
+	});
+
+	test('ignore thrown errors', () => {
+		const input = new EventEmitter();
+		const output = {};
+		const map = jest.fn(() => { throw new Error(); });
+		MAP.factory({map, logLevelMap: null}, [input], [output], {});
+		input.emit('update');
+		expect(output.value).toBeUndefined();
+	});
+
+	test('report thrown errors', () => {
+		const input = new EventEmitter();
+		const output = {};
+		const err = new Error();
+		const map = jest.fn(() => { throw err; });
+		const error = jest.fn();
+		MAP.factory({map, logLevelMap: 'error'}, [input], [output], {error});
+		input.emit('update');
+		expect(error.mock.calls[0][0]).toBe(err);
+		expect(error.mock.calls[0][1]).toEqual('3af3bbc53a549a7769659c9809e6c8d0');
 	});
 });
