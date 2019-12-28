@@ -5,31 +5,19 @@ jest.useFakeTimers();
 
 describe('check', () => {
 	test('expect one output', () => {
-		try {
-			SCHEDULER.check({
-				input: [],
-				output: [],
-				schedule: () => {}
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('One output must be specified');
-		}
+		expect(() => SCHEDULER.check({
+			input: [],
+			output: [],
+			schedule: () => {}
+		})).toThrow('One output must be specified');
 	});
 	test('expect schedule to be specified', () => {
-		try {
-			SCHEDULER.check({
-				input: [ {} ],
-				output: [ {} ]
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('schedule must be a function');
-		}
+		expect(() => SCHEDULER.check({
+			input: [ {} ],
+			output: [ {} ]
+		})).toThrow('schedule must be a function');
 	});
-	test('valid input', () => {
+	test('defaults', () => {
 		const opts = {
 			input: [ {} ],
 			output: [ {} ],
