@@ -10,42 +10,24 @@ describe('check', () => {
 		});
 	});
 	test('expect at least one input', () => {
-		try {
-			COMBINE.check({
-				input: [],
-				output: [ {} ],
-				combine: () => {}
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('At least one input must be specified');
-		}
+		expect(() => COMBINE.check({
+			input: [],
+			output: [ {} ],
+			combine: () => {}
+		})).toThrow('At least one input must be specified');
 	});
 	test('expect one output', () => {
-		try {
-			COMBINE.check({
-				input: [ {} ],
-				output: [],
-				combine: () => {}
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('One output must be specified');
-		}
+		expect(() => COMBINE.check({
+			input: [ {} ],
+			output: [],
+			combine: () => {}
+		})).toThrow('One output must be specified');
 	});
 	test('expect combine to be specified', () => {
-		try {
-			COMBINE.check({
-				input: [ {} ],
-				output: [ {} ]
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('combine must be a function');
-		}
+		expect(() => COMBINE.check({
+			input: [ {} ],
+			output: [ {} ]
+		})).toThrow('combine must be a function');
 	});
 });
 
@@ -125,61 +107,4 @@ describe('factroy', () => {
 		i1.emit('update');
 		expect(output.value).toBeUndefined();
 	});
-	/* test('call weight function with every input on update and set output', () => {
-		const input = [{}, {}].map((value) => {
-			const e = new EventEmitter();
-			e.value = value;
-			return e;
-		});
-		input.entries = () => input;
-		const output = [{}];
-		const weight = jest.fn((i, n) => n);
-		COMBINE.factory({ weight }, input, output);
-		input[0].emit('update');
-		expect(weight.mock.calls.length).toBe(2);
-		expect(weight.mock.calls[0][0]).toBe(input[0]);
-		expect(weight.mock.calls[0][1]).toBe(0);
-		expect(weight.mock.calls[1][0]).toBe(input[1]);
-		expect(weight.mock.calls[1][1]).toBe(1);
-		expect(output[0].value).toBe(input[1].value);
-	});
-	test('ignore undefined score', () => {
-		const input = [{}, {}].map((value) => {
-			const e = new EventEmitter();
-			e.value = value;
-			return e;
-		});
-		input.entries = () => input;
-		const output = [{}];
-		const weight = jest.fn((i, n) => n === 1 ? 1 : undefined);
-		COMBINE.factory({ weight }, input, output);
-		input[0].emit('update');
-		expect(output[0].value).toBe(input[1].value);
-	});
-	test('don\'t set output if no score has been returned', () => {
-		const input = [{}, {}].map((value) => {
-			const e = new EventEmitter();
-			e.value = value;
-			return e;
-		});
-		input.entries = () => input;
-		const output = [{}];
-		const weight = jest.fn((i, n) => undefined);
-		COMBINE.factory({ weight }, input, output);
-		input[0].emit('update');
-		expect(output[0].value).toBeUndefined();
-	});
-	test('call evaluate on expire', () => {
-		const input = [{}, {}].map((value) => {
-			const e = new EventEmitter();
-			e.value = value;
-			return e;
-		});
-		input.entries = () => input;
-		const output = [{}];
-		const weight = jest.fn();
-		COMBINE.factory({ weight }, input, output);
-		input[0].emit('expire');
-		expect(weight.mock.calls.length).toBe(2);
-	}); */
 });
