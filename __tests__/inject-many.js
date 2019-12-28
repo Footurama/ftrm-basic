@@ -6,76 +6,46 @@ const nextLoop = () => new Promise((resolve) => setImmediate(resolve));
 
 describe('check', () => {
 	test('expect zero inputs', () => {
-		try {
-			INJECTMANY.check({
-				input: [ {} ],
-				output: [ {name: 'test'} ],
-				inject: () => {},
-				interval: 123
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('No inputs can be specified');
-		}
+		expect(() => INJECTMANY.check({
+			input: [ {} ],
+			output: [ {name: 'test'} ],
+			inject: () => {},
+			interval: 123
+		})).toThrow('No inputs can be specified');
 	});
 
 	test('expect at least one output', () => {
-		try {
-			INJECTMANY.check({
-				input: [],
-				output: [],
-				inject: () => {},
-				interval: 123
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('At least one output must be specified');
-		}
+		expect(() => INJECTMANY.check({
+			input: [],
+			output: [],
+			inject: () => {},
+			interval: 123
+		})).toThrow('At least one output must be specified');
 	});
 
 	test('all output must have names', () => {
-		try {
-			INJECTMANY.check({
-				input: [],
-				output: [{name: 'test'}, {}],
-				inject: () => {},
-				interval: 123
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('All outputs must have the property name');
-		}
+		expect(() => INJECTMANY.check({
+			input: [],
+			output: [{name: 'test'}, {}],
+			inject: () => {},
+			interval: 123
+		})).toThrow('All outputs must have the property name');
 	});
 
 	test('expect inject function', () => {
-		try {
-			INJECTMANY.check({
-				input: [],
-				output: [ {name: 'test'} ],
-				interval: 42
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('Inject function must be specified');
-		}
+		expect(() => INJECTMANY.check({
+			input: [],
+			output: [ {name: 'test'} ],
+			interval: 42
+		})).toThrow('Inject function must be specified');
 	});
 
 	test('expect interval', () => {
-		try {
-			INJECTMANY.check({
-				input: [],
-				output: [ {name: 'test'} ],
-				inject: () => {}
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('Interval must be specified');
-		}
+		expect(() => INJECTMANY.check({
+			input: [],
+			output: [ {name: 'test'} ],
+			inject: () => {}
+		})).toThrow('Interval must be specified');
 	});
 });
 
