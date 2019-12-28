@@ -7,9 +7,10 @@ function check (opts) {
 	if (opts.input.length === 0) throw new Error('At least one input must be specified');
 	if (opts.output.length !== 1) throw new Error('One output must be specified');
 	if (typeof opts.combine !== 'function') throw new Error('combine must be a function');
+	if (opts.logLevelCombine === undefined) opts.logLevelCombine = 'warn';
 }
 
-function factory (opts, input, output) {
+function factory (opts, input, output, log) {
 	// Make sure input is iterable
 	input = input.entries();
 
@@ -22,7 +23,11 @@ function factory (opts, input, output) {
 		}
 		try {
 			output[0].value = opts.combine.apply(null, input.map((i) => i.value));
-		} catch (e) {}
+		} catch (err) {
+			if (log[opts.logLevelCombine]) {
+				log[opts.logLevelCombine](err, 'de84c6382b412f2f4bf02c9ba525fc31');
+			}
+		}
 	}
 
 	for (let i of input) {

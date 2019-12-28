@@ -2,12 +2,14 @@ const EventEmitter = require('events');
 const COMBINE = require('../combine.js');
 
 describe('check', () => {
-	test('valid input', () => {
-		COMBINE.check({
+	test('defaults', () => {
+		const opts = {
 			input: [ {} ],
 			output: [ {} ],
 			combine: () => {}
-		});
+		};
+		COMBINE.check(opts);
+		expect(opts.logLevelCombine).toEqual('warn');
 	});
 	test('expect at least one input', () => {
 		expect(() => COMBINE.check({
@@ -103,8 +105,27 @@ describe('factroy', () => {
 		const input = [i0, i1];
 		input.entries = () => input;
 		const output = {};
-		COMBINE.factory({combine}, input, [output]);
+		COMBINE.factory({combine, logLevelCombine: null}, input, [output], {});
 		i1.emit('update');
 		expect(output.value).toBeUndefined();
+	});
+
+	test('report thrown errors', () => {
+		const err = new Error();
+		const combine = jest.fn(() => { throw err; });
+		const i0 = new EventEmitter();
+		i0.value = 0;
+		i0.expired = false;
+		const i1 = new EventEmitter();
+		i1.value = 1;
+		i1.expired = false;
+		const input = [i0, i1];
+		input.entries = () => input;
+		const output = {};
+		const error = jest.fn();
+		COMBINE.factory({combine, logLevelCombine: 'error'}, input, [output], {error});
+		i1.emit('update');
+		expect(error.mock.calls[0][0]).toBe(err);
+		expect(error.mock.calls[0][1]).toEqual('de84c6382b412f2f4bf02c9ba525fc31');
 	});
 });
