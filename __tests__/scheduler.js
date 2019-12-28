@@ -25,6 +25,7 @@ describe('check', () => {
 		};
 		SCHEDULER.check(opts);
 		expect(opts.interval).toBe(60000);
+		expect(opts.logLevelSchedule).toEqual('warn');
 	});
 });
 
@@ -71,10 +72,24 @@ describe('factroy', () => {
 		input.entries = () => input;
 		const output = {};
 		const interval = 1000;
-		SCHEDULER.factory({schedule, interval}, input, [output]);
+		SCHEDULER.factory({schedule, interval, logLevelSchedule: null}, input, [output], {});
 		jest.advanceTimersByTime(interval);
 		expect(schedule.mock.calls.length).toBe(1);
 		expect(output.value).toBeUndefined();
+	});
+
+	test('report thrown errors', () => {
+		const err = new Error();
+		const schedule = jest.fn(() => { throw err; });
+		const input = [];
+		input.entries = () => input;
+		const output = {};
+		const interval = 1000;
+		const error = jest.fn();
+		SCHEDULER.factory({schedule, interval, logLevelSchedule: 'error'}, input, [output], {error});
+		jest.advanceTimersByTime(interval);
+		expect(error.mock.calls[0][0]).toBe(err);
+		expect(error.mock.calls[0][1]).toEqual('37413d101f6798f6bfefe05df8e2dbb4');
 	});
 
 	test('abort interval on exit', () => {
