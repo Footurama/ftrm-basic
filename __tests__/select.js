@@ -1,64 +1,40 @@
 const EventEmitter = require('events');
-const SELECT = require('../select.js');
+const select = require('../select.js');
 
 describe('check', () => {
 	test('valid input', () => {
-		SELECT.check({
+		select.check({
 			input: [ {} ],
 			output: [ {} ],
 			weight: () => {}
 		});
 	});
 	test('expect at least one input', () => {
-		try {
-			SELECT.check({
-				input: [],
-				output: [ {} ],
-				weight: 'prio'
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('At least one input must be specified');
-		}
+		expect(() => select.check({
+			input: [],
+			output: [ {} ],
+			weight: 'prio'
+		})).toThrow('At least one input must be specified');
 	});
 	test('expect one output', () => {
-		try {
-			SELECT.check({
-				input: [ {} ],
-				output: [],
-				weight: 'prio'
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('One output must be specified');
-		}
+		expect(() => select.check({
+			input: [ {} ],
+			output: [],
+			weight: 'prio'
+		})).toThrow('One output must be specified');
 	});
 	test('expect weigth to be a valid string', () => {
-		try {
-			SELECT.check({
-				input: [ {} ],
-				output: [ {} ],
-				weight: 'foo'
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('Unkown weight function: foo');
-		}
+		expect(() => select.check({
+			input: [ {} ],
+			output: [ {} ],
+			weight: 'foo'
+		})).toThrow('Unkown weight function: foo');
 	});
 	test('expect weigth to be specified', () => {
-		try {
-			SELECT.check({
-				input: [ {} ],
-				output: [ {} ]
-			});
-			throw new Error('FAILED!');
-		} catch (e) {
-			expect(e).toBeInstanceOf(Error);
-			expect(e.message).toEqual('weight must be specified');
-		}
+		expect(() => select.check({
+			input: [ {} ],
+			output: [ {} ]
+		})).toThrow('weight must be specified');
 	});
 	test('weight function: prio', () => {
 		const opts = {
@@ -66,7 +42,7 @@ describe('check', () => {
 			output: [ {} ],
 			weight: 'prio'
 		};
-		SELECT.check(opts);
+		select.check(opts);
 		const w = opts.weight;
 		expect(w({ expired: true }, 0)).toBeUndefined();
 		expect(w({ value: undefined }, 0)).toBeUndefined();
@@ -78,7 +54,7 @@ describe('check', () => {
 			output: [ {} ],
 			weight: 'max'
 		};
-		SELECT.check(opts);
+		select.check(opts);
 		const w = opts.weight;
 		expect(w({ expired: true }, 0)).toBeUndefined();
 		expect(w({ value: undefined }, 0)).toBeUndefined();
@@ -90,7 +66,7 @@ describe('check', () => {
 			output: [ {} ],
 			weight: 'min'
 		};
-		SELECT.check(opts);
+		select.check(opts);
 		const w = opts.weight;
 		expect(w({ expired: true }, 0)).toBeUndefined();
 		expect(w({ value: undefined }, 0)).toBeUndefined();
@@ -108,7 +84,7 @@ describe('factroy', () => {
 		input.entries = () => input;
 		const output = [{}];
 		const weight = jest.fn((i, n) => n);
-		SELECT.factory({ weight }, input, output);
+		select.factory({ weight }, input, output);
 		input[0].emit('update');
 		expect(weight.mock.calls.length).toBe(2);
 		expect(weight.mock.calls[0][0]).toBe(input[0]);
@@ -126,7 +102,7 @@ describe('factroy', () => {
 		input.entries = () => input;
 		const output = [{}];
 		const weight = jest.fn((i, n) => n === 1 ? 1 : undefined);
-		SELECT.factory({ weight }, input, output);
+		select.factory({ weight }, input, output);
 		input[0].emit('update');
 		expect(output[0].value).toBe(input[1].value);
 	});
@@ -139,7 +115,7 @@ describe('factroy', () => {
 		input.entries = () => input;
 		const output = [{}];
 		const weight = jest.fn((i, n) => undefined);
-		SELECT.factory({ weight }, input, output);
+		select.factory({ weight }, input, output);
 		input[0].emit('update');
 		expect(output[0].value).toBeUndefined();
 	});
@@ -152,7 +128,7 @@ describe('factroy', () => {
 		input.entries = () => input;
 		const output = [{}];
 		const weight = jest.fn();
-		SELECT.factory({ weight }, input, output);
+		select.factory({ weight }, input, output);
 		input[0].emit('expire');
 		expect(weight.mock.calls.length).toBe(2);
 	});
