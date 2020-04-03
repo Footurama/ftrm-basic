@@ -3,11 +3,13 @@ const select = require('../select.js');
 
 describe('check', () => {
 	test('valid input', () => {
-		select.check({
+		const opts = {
 			input: [ {} ],
 			output: [ {} ],
 			weight: () => {}
-		});
+		};
+		select.check(opts);
+		expect(opts.logLevelSelect).toEqual('warn');
 	});
 	test('expect at least one input', () => {
 		expect(() => select.check({
@@ -131,5 +133,22 @@ describe('factroy', () => {
 		select.factory({ weight }, input, output);
 		input[0].emit('expire');
 		expect(weight.mock.calls.length).toBe(2);
+	});
+	test('report errors', () => {
+		const input = [{}, {}].map((value) => {
+			const e = new EventEmitter();
+			e.value = value;
+			return e;
+		});
+		input.entries = () => input;
+		const output = [{}];
+		const err = new Error();
+		const weight = () => { throw err; };
+		const error = jest.fn();
+		select.factory({ logLevelSelect: 'error', weight }, input, output, {error});
+		input[0].emit('update');
+		expect(output[0].value).toBeUndefined();
+		expect(error.mock.calls[0][0]).toBe(err);
+		expect(error.mock.calls[0][1]).toEqual('efa14f6fdc594c7a92cc38fb9447808e');
 	});
 });
