@@ -272,3 +272,40 @@ module.exports = [require('ftrm-basic/generic'), {
 	}
 }];
 ```
+
+### ftrm-basic/scene
+
+Run scenes on outputs based on a given input message.
+
+Configuration:
+
+ * `input`: **1**. Pipe to read scene commands from. Strings are converted to `{scene: '[value]'}`. Objects must contain the item `scene` with a string naming a defined scene.
+ * `output`: **1..n**. Pipes to write to within a scene.
+ * `scenes`: An object containing scenes. Every scene is a function: `(inputMsg, outputs, {delay}) => {}`.
+   * `inputMsg`: The message received from the input pipe. It can be used to transport scene parameters.
+   * `outputs`: Defined outputs.
+   * `delay`: A helper function to delay execution
+ * `logLevel`: The log level for error reporting. Set to `null` to disable error reporting. Default: `'error'`.
+
+Example:
+
+```js
+module.exports = [require('ftrm-basic/scene'), {
+	input: 'scene',
+	output : {
+		light: 'light.on',
+		tv: 'tv.on'
+	},
+	scenes: {
+		startMovie: async ({lightsOnDelay}, {light, tv}, {delay}) => {
+			tv.value = true;
+			await delay(lightsOnDelay || 10 * 000);
+			light.value = false;
+		},
+		stopMovie: async ({}, {light, tv}, {}) => {
+			light.value = true;
+			tv.value = false;
+		}
+	}
+}];
+```
