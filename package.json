@@ -23,7 +23,7 @@
   "homepage": "https://github.com/Footurama/ftrm-basic#readme",
   "devDependencies": {
     "happiness": "^10.0.2",
-    "jest": "^25.2.7"
+    "jest": "^26.0.1"
   },
   "happiness": {
     "globals": [
