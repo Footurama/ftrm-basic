@@ -309,3 +309,30 @@ module.exports = [require('ftrm-basic/scene'), {
 	}
 }];
 ```
+
+### ftrm-basic/edge-detection
+
+Detects edges on an input.
+
+Configuration:
+
+ * `input`: **1**. Pipe to observe edges from
+ * `output`: **1**. Pipe to output detected edge data.
+ * `detectors`: An array containing detectors. Every detector is an object with the following items:
+   * `match`: A string or a function. `'rising-egde'` matches edges from `false` to `true`. `falling-edge` matches edges from `true` to `false`. `(from, to) => result` can implement generic edge detectors, which returns `true` on match.
+   * `output`: The value to output if `match` detected an edge.
+   * `delay`: Optional time in milliseconds. If the `output` value is given into the output pipe after the given delay.
+ * `retriggerDetectors`: If set to `true`, `detectors` with non-zero `delay` can be retriggered if the edge is observed multiple times.
+
+Example:
+
+```js
+module.exports = [require('ftrm-basic/edge-detection'), {
+	input: 'windowOpen',
+	output: 'temperatureSetpoint',
+	detectors: [
+		{match: 'rising-edge', output: 10},
+		{match: 'falling-edge', output: 19}
+	]
+}];
+```
