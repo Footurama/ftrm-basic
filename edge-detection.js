@@ -13,7 +13,8 @@ const predefinedMatches = {
 
 function check (opts) {
 	assert(opts.input.length === 1, 'One input required');
-	assert(opts.output.length === 1, 'One output required');
+	assert(opts.output.length >= 1, 'At least one output required');
+	if (opts.output.length > 1) opts.output.forEach((o) => assert(o.name, 'Every output must have a name'));
 	if (!Array.isArray(opts.detectors)) opts.detectors = [opts.detectors];
 	assert(opts.detectors.length > 0, 'At least one detector must be specified');
 	opts.detectors.forEach((detector) => {
@@ -48,12 +49,10 @@ class DelayedEvents {
 }
 
 function factory (opts, inputs, outputs, log) {
-	const i = inputs[0];
-	const o = outputs[0];
 	const delayedEvents = new DelayedEvents();
 	let lastValue;
 
-	i.on('change', (value) => {
+	inputs[0].on('change', (value) => {
 		opts.detectors.filter((detector) => {
 			try {
 				return detector.match(lastValue, value);
@@ -62,7 +61,17 @@ function factory (opts, inputs, outputs, log) {
 			}
 		}).forEach((detector) => {
 			if (opts.retriggerDetectors) delayedEvents.abort(detector.handle);
-			detector.handle = delayedEvents.add(() => o.set(detector.output), detector.delay || 0);
+			detector.handle = delayedEvents.add(() => {
+				if (outputs.length > 1) {
+					Object.keys(outputs).forEach((key) => {
+						// Ignore unknown outputs
+						if (!detector.output || !detector.output.hasOwnProperty(key)) return;
+						outputs[key].set(detector.output[key]);
+					});
+				} else {
+					outputs[0].set(detector.output);
+				}
+			}, detector.delay || 0);
 		});
 		lastValue = value;
 	});

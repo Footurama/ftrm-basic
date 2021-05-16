@@ -317,10 +317,10 @@ Detects edges on an input.
 Configuration:
 
  * `input`: **1**. Pipe to observe edges from
- * `output`: **1**. Pipe to output detected edge data.
+ * `output`: **1..n**. Pipe to outputs of detected edge data.
  * `detectors`: An array containing detectors. Every detector is an object with the following items:
    * `match`: A string or a function. `'rising-egde'` matches edges from `false` to `true`. `falling-edge` matches edges from `true` to `false`. `(from, to) => result` can implement generic edge detectors, which returns `true` on match.
-   * `output`: The value to output if `match` detected an edge.
+   * `output`: If only one output pipe has been specfied: The value to output if `match` detected an edge. Otherwise: An object assigning values to the outputs ba name.
    * `delay`: Optional time in milliseconds. If the `output` value is given into the output pipe after the given delay.
  * `retriggerDetectors`: If set to `true`, `detectors` with non-zero `delay` can be retriggered if the edge is observed multiple times.
 

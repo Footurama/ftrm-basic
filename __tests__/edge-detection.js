@@ -54,7 +54,8 @@ describe('check', () => {
 
 	test('fail on missing options', () => {
 		expect(() => check({input: [], output: [{}], detectors: [{match: () => {}}]})).toThrow('One input required');
-		expect(() => check({input: [{}], output: [], detectors: [{match: () => {}}]})).toThrow('One output required');
+		expect(() => check({input: [{}], output: [], detectors: [{match: () => {}}]})).toThrow('At least one output required');
+		expect(() => check({input: [{}], output: [{}, {}], detectors: [{match: () => {}}]})).toThrow('Every output must have a name');
 		expect(() => check({input: [{}], output: [{}], detectors: []})).toThrow('At least one detector must be specified');
 		expect(() => check({input: [{}], output: [{}], detectors: [{}]})).toThrow('Every detector must have a match function');
 	});
@@ -73,6 +74,23 @@ describe('factory', () => {
 		i.emit('change', b);
 		jest.advanceTimersByTime(delay);
 		expect(o.set.mock.calls[0][0]).toBe(output);
+	});
+
+	test('Multiple outputs', () => {
+		const i = new EventEmitter();
+		const o = {
+			length: 2,
+			x: {set: jest.fn()},
+			y: {set: jest.fn()}
+		};
+		factory({detectors: [{
+			match: () => true,
+			output: {x: undefined, z: -1}
+		}]}, [i], o);
+		i.emit('change');
+		jest.advanceTimersByTime(0);
+		expect(o.x.set.mock.calls[0][0]).toBe(undefined);
+		expect(o.y.set.mock.calls.length).toBe(0);
 	});
 
 	test('Retrigger detectors', () => {
