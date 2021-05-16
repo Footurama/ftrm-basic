@@ -63,10 +63,10 @@ function factory (opts, inputs, outputs, log) {
 			if (opts.retriggerDetectors) delayedEvents.abort(detector.handle);
 			detector.handle = delayedEvents.add(() => {
 				if (outputs.length > 1) {
-					Object.keys(outputs).forEach((key) => {
+					Object.entries(detector.output || {}).forEach(([key, value]) => {
 						// Ignore unknown outputs
-						if (!detector.output || !detector.output.hasOwnProperty(key)) return;
-						outputs[key].set(detector.output[key]);
+						if (!outputs[key]) return;
+						outputs[key].set(value);
 					});
 				} else {
 					outputs[0].set(detector.output);
