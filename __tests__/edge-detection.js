@@ -79,18 +79,20 @@ describe('factory', () => {
 	test('Multiple outputs', () => {
 		const i = new EventEmitter();
 		const o = {
-			length: 2,
+			length: 3,
+			a: {set: jest.fn()},
 			x: {set: jest.fn()},
 			y: {set: jest.fn()}
 		};
 		factory({detectors: [{
 			match: () => true,
-			output: {x: undefined, z: -1}
+			output: {x: undefined, y: 42, z: -1}
 		}]}, [i], o);
 		i.emit('change');
 		jest.advanceTimersByTime(0);
+		expect(o.a.set.mock.calls.length).toBe(0);
 		expect(o.x.set.mock.calls[0][0]).toBe(undefined);
-		expect(o.y.set.mock.calls.length).toBe(0);
+		expect(o.y.set.mock.calls[0][0]).toBe(42);
 	});
 
 	test('Retrigger detectors', () => {
