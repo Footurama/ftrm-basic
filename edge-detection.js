@@ -61,6 +61,7 @@ function factory (opts, inputs, outputs, log) {
 			}
 		}).forEach((detector) => {
 			if (opts.retriggerDetectors) delayedEvents.abort(detector.handle);
+			if (opts.abortDetectors) delayedEvents.abortAll();
 			detector.handle = delayedEvents.add(() => {
 				if (outputs.length > 1) {
 					Object.entries(detector.output || {}).forEach(([key, value]) => {

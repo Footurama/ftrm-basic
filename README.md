@@ -323,6 +323,7 @@ Configuration:
    * `output`: If only one output pipe has been specfied: The value to output if `match` detected an edge. Otherwise: An object assigning values to the outputs ba name.
    * `delay`: Optional time in milliseconds. If the `output` value is given into the output pipe after the given delay.
  * `retriggerDetectors`: If set to `true`, `detectors` with non-zero `delay` can be retriggered if the edge is observed multiple times.
+ * `abortDetectors`: If set to `true`, a triggered `detectors` with non-zero `delay` are aborted if another detector mathed.
 
 Example:
 

@@ -109,6 +109,25 @@ describe('factory', () => {
 		expect(o.set.mock.calls.length).toBe(1);
 	});
 
+	test('Abort detectors', () => {
+		const i = new EventEmitter();
+		const o = {set: jest.fn()};
+		const delay = 123;
+		factory({
+			abortDetectors: true,
+			detectors: [
+				{match: (from, to) => from === true && to === false, delay, output: 0},
+				{match: (from, to) => from === false && to === true, output: 1}
+			]}, [i], [o]);
+		i.emit('change', true);
+		i.emit('change', false);
+		jest.advanceTimersByTime(delay - 1);
+		i.emit('change', true);
+		jest.advanceTimersByTime(1);
+		expect(o.set.mock.calls.length).toBe(1);
+		expect(o.set.mock.calls[0][0]).toBe(1);
+	});
+
 	test('Abort all delayed events on exit', () => {
 		const i = new EventEmitter();
 		const o = {set: jest.fn()};
